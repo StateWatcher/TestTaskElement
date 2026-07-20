@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+node_modules/
+dist/
+.DS_Store
+.idea/
+.claude/*.lock
+TaskAnalysis.md

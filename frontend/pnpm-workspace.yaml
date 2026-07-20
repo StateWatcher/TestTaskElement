@@ -1,0 +1,5 @@
+# pnpm 11 держит настройки здесь, а не в поле "pnpm" package.json.
+# vue-demi приезжает транзитивно (reka-ui → @floating-ui/vue) и в postinstall
+# подставляет шим под установленную мажорную версию Vue — build ему нужен.
+allowBuilds:
+  vue-demi: true

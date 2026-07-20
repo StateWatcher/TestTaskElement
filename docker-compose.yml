@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    command: ["-p", "${POSTGRES_PORT:-5432}"]
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте в .env}
+      POSTGRES_DB: ${POSTGRES_DB:-lots}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-lots} -p ${POSTGRES_PORT:-5432}",
+        ]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте в .env}
+      POSTGRES_DB: ${POSTGRES_DB:-lots}
+      AUTH_SECRET_KEY: ${AUTH_SECRET_KEY:?задайте в .env}
+      AUTH_SUPERUSER_LOGIN: ${AUTH_SUPERUSER_LOGIN:?задайте в .env}
+      AUTH_SUPERUSER_PASSWORD: ${AUTH_SUPERUSER_PASSWORD:?задайте в .env}
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      APP_CORS_ORIGINS: ${APP_CORS_ORIGINS:-["http://localhost:5173"]}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    # nginx отдаёт статику и проксирует /api на backend по имени сервиса:
+    # фронт и API живут на одном origin, поэтому URL бэкенда нигде не дублируется
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+
+volumes:
+  pgdata:

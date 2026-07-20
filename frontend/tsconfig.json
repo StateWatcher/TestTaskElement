@@ -1,0 +1,22 @@
+{
+  "files": [],
+  // baseUrl/paths продублированы здесь только ради CLI shadcn-vue: он читает корневой tsconfig,
+  // а рабочий алиас живёт в tsconfig.app.json и vite.config.ts
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ]
+}
