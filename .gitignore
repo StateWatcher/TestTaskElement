@@ -14,3 +14,4 @@ dist/
 .claude/*.lock
 TaskAnalysis.md
 .VSCodeCounter
+CLAUDE.md
